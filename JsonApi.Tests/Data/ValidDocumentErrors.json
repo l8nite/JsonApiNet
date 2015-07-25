@@ -1,0 +1,17 @@
+﻿{
+    "errors": [
+        {
+            "id": "42",
+            "status": 500,
+            "code": "ISE",
+            "title": "Error Title",
+            "detail": "Error details go here.",
+            "links": {
+                "about": "http://go.to/error"
+            },
+            "meta": {
+                "trace": "foo"
+            }
+        }
+    ]
+}

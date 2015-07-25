@@ -1,0 +1,16 @@
+﻿{
+    "data": {
+        "type": "articles",
+        "id": "93efd274-72b7-4738-8446-7263a5d54d05",
+        "attributes": {
+            "title": "JSON API paints my bikeshed!",
+            "tidbits": {
+                "genre": "News",
+                "isbn":  512
+            }
+        },
+        "links": {
+            "self": "http://example.com/articles/11"
+        }
+    }
+}
