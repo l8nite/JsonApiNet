@@ -1,4 +1,4 @@
-JsonApi.Net
+JsonApiNet
 ---
 A C# library for deserialization of JSON API responses, built on top of [Json.NET](https://github.com/JamesNK/Newtonsoft.Json). 
 
