@@ -4,12 +4,12 @@ A C# library for deserialization of JSON API responses, built on top of [Json.NE
 
 This library was written against **v1.0** of [the JSON API specification](http://jsonapi.org/format/)
 
-> If you're looking for a serializer for your API, give the not-affiliated [JsonApiMediaTypeFormatter](https://github.com/rmichela/JsonApiMediaTypeFormatter) library a try.
+> If you're looking for a serializer for your API, give the [JsonApiMediaTypeFormatter](https://github.com/rmichela/JsonApiMediaTypeFormatter) library a try.
 
 
 Basic Usage
 ---
-Here is a simple JSON API document representing a list of articles. The single article in the list has an id, a title, and a URL where you can fetch the article resource.
+Here is a simple JSON API document representing a single article. The article has an id, a title, and a URL where you can fetch the article resource.
 
     {
       "data": {
@@ -41,39 +41,32 @@ Now we can get the `Resource` property, which will be of type `Article`:
     var article = document.Resource;
     Assert.AreEqual("JSON API paints my bikeshed!", article.Title);
 
-Getting a list of resources works the same way:
+> Note: The `Id` field for our `Article` class above is a `Guid` instead of a `string`. For `id` values, the converter supports any `Type` that implements a static `Parse(string)` method and will attempt to coerce the value found in the document to the appropriate type.
+
+
+Lists of resources
+---
+
+Let's make our sample document return a list with 1 element instead of a single resource:
+
+    {
+      "data": [{
+        "type": "articles",
+        "id": "30cd428f-1a3b-459b-a9a8-0ca87c14dd31",
+        "attributes": {
+          "title": "JSON API paints my bikeshed!"
+        },
+        "links": {
+          "self": "http://example.com/articles/11"
+        }
+      }]
+    }
+
+Parsing it and getting to our `List<Article>` instance is easy:
 
     var document = JsonConvert.DeserializeObject<JsonApiDocument<List<Article>>>(json);
     var articles = document.Resource;
     Assert.AreEqual("JSON API paints my bikeshed!", articles[0].Title);
-    
-> Note: The `Id` field for our `Article` class above is a `Guid` instead of a `string`. For `id` values, the converter supports any `Type` that implements a static `Parse(string)` method and will attempt to coerce the value found in the document to the appropriate type. This will throw an exception if the value is not of the expected type. This does not change the comparison behavior for the included resources, which will continue to use the `string` identifier.
-
-
-Additional Response Data
----
-
-You can also query the `JsonApiDocument` instance for the full structure of the parsed document, including `Meta`, `Links`, `Errors`, etc.
-
-For example, if there were `'links'` at the top-level of the document:
-
-    {
-      "links": {
-        "admin": "http://admin.to/articles"
-      },
-      "data": { ... }
-    }
-
-Then we can fetch the `'admin'` link:
-
-    var links = document.Links;
-    var adminUrl = links["admin"].Uri;
-    
-In this case, `links` would be a `JsonApiLinks` container instance, holding `JsonApiLink` members. 
-    
-> Note: Each `JsonApiLink` stored in the `JsonApiLinks` container has `Href` and `Meta` properties for fetching the values parsed out of the document and an additional `Uri` helper that converts the `Href` value into a `System.Uri`. In the case of a "simple link" (i.e., a string containing the link's URL), the `Meta` property will be null.
-
-You can get the parsed representation of the resource by calling `document.Data`, which is a `JsonApiResource` instance. This instance will let you fetch the `Attributes`, `Relationships`, `Links`, `Id`, `Type`, and `Meta` that were parsed from the document.
 
 
 Compound Documents
@@ -188,7 +181,33 @@ And look, the author and comments are available too:
     var comments = articles[0].Comments;
     Assert.AreEqual("I like XML better", comments[1].Body);
 
-> Note: If you need access to additional data about the relationships, you need to map the appropriate fields into your concrete classes (see the _Advanced Usage_ section) or drill down via the `document` instance to the `Relationships` and `Included` methods.
+> Note: If you need access to additional data about the relationships, you need to map the appropriate fields into your concrete classes (see the _Advanced Usage_ section) or drill down via the `document` instance to the `Relationships` and `Included` methods (see the _Additional Response Data_ section).
+
+
+Additional Response Data
+---
+
+You can also query the `JsonApiDocument` instance for the full structure of the parsed document, including `Meta`, `Links`, `Errors`, etc.
+
+For example, if there were `'links'` at the top-level of the document:
+
+    {
+      "links": {
+        "admin": "http://admin.to/articles"
+      },
+      "data": { ... }
+    }
+
+Then we can fetch the `'admin'` link:
+
+    var links = document.Links;
+    var adminUrl = links["admin"].Uri;
+    
+In this case, `links` would be a `JsonApiLinks` container instance, holding `JsonApiLink` members. 
+    
+> Note: Each `JsonApiLink` stored in the `JsonApiLinks` container has `Href` and `Meta` properties for fetching the values parsed out of the document and an additional `Uri` helper that converts the `Href` value into a `System.Uri`. In the case of a "simple link" (i.e., a string containing the link's URL), the `Meta` property will be null.
+
+You can get the parsed representation of the resource by calling `document.Data`, which is a `JsonApiResource` instance. This instance will let you fetch the `Attributes`, `Relationships`, `Links`, `Id`, `Type`, and `Meta` that were parsed from the document.
 
 
 Advanced Usage
