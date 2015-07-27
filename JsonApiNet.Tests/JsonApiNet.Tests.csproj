@@ -73,7 +73,7 @@
     <Compile Include="Conversion\SingularResourceTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JsonApi\JsonApiNet.csproj">
+    <ProjectReference Include="..\JsonApiNet\JsonApiNet.csproj">
       <Project>{3DE2919D-C351-4355-93DB-4C1EB77B8D1C}</Project>
       <Name>JsonApiNet</Name>
     </ProjectReference>

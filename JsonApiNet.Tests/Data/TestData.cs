@@ -25,7 +25,7 @@ namespace JsonApiNet.Tests.Data
         {
             var assembly = Assembly.GetExecutingAssembly();
 
-            var resourceName = string.Format("JsonApi.Tests.Data.{0}", key);
+            var resourceName = string.Format("JsonApiNet.Tests.Data.{0}", key);
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             {
