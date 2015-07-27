@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3DE2919D-C351-4355-93DB-4C1EB77B8D1C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JsonApiNet</RootNamespace>
+    <AssemblyName>JsonApiNet</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\JsonApiAttributeAttribute.cs" />
+    <Compile Include="Attributes\JsonApiIdAttribute.cs" />
+    <Compile Include="Attributes\JsonApiRelationshipAttribute.cs" />
+    <Compile Include="Attributes\JsonApiTypeAttribute.cs" />
+    <Compile Include="Helpers\ResourcePropertyResolver.cs" />
+    <Compile Include="JsonConverters\AttributesJsonConverter.cs" />
+    <Compile Include="JsonConverters\DocumentJsonConverter.cs" />
+    <Compile Include="Components\JsonApiAttributes.cs" />
+    <Compile Include="Attributes\JsonApiBaseAttribute.cs" />
+    <Compile Include="Components\JsonApiDocument.cs" />
+    <Compile Include="Components\JsonApiErrors.cs" />
+    <Compile Include="Components\JsonApiJsonApi.cs" />
+    <Compile Include="JsonConverters\JsonApiAttributesContractResolver.cs" />
+    <Compile Include="JsonConverters\LinkJsonConverter.cs" />
+    <Compile Include="Components\JsonApiLinks.cs" />
+    <Compile Include="Components\JsonApiMeta.cs" />
+    <Compile Include="Components\JsonApiRelationship.cs" />
+    <Compile Include="Components\JsonApiRelationships.cs" />
+    <Compile Include="Helpers\JsonApiResourceMapper.cs" />
+    <Compile Include="Components\JsonApiResourceIdentifier.cs" />
+    <Compile Include="Components\JsonApiResourceLinkage.cs" />
+    <Compile Include="JsonConverters\ResourceLinkageJsonConverter.cs" />
+    <Compile Include="Components\JsonApiError.cs" />
+    <Compile Include="Components\JsonApiErrorSource.cs" />
+    <Compile Include="Exceptions\JsonApiFormatException.cs" />
+    <Compile Include="Components\JsonApiLink.cs" />
+    <Compile Include="Components\JsonApiResource.cs" />
+    <Compile Include="Exceptions\JsonApiUsageException.cs" />
+    <Compile Include="Helpers\TypeExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
