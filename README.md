@@ -1,15 +1,33 @@
 JsonApiNet
 ---
-A C# library for deserialization of JSON API responses, built on top of [Json.NET](https://github.com/JamesNK/Newtonsoft.Json). 
 
-This library was written against **v1.0** of [the JSON API specification](http://jsonapi.org/format/)
-
-> If you're looking for a serializer for your API, give the [JsonApiMediaTypeFormatter](https://github.com/rmichela/JsonApiMediaTypeFormatter) library a try.
-
-
-Basic Usage
 ---
-Here is a simple JSON API document representing a single article. The article has an id, a title, and a URL where you can fetch the article resource.
+### This is an in-progress branch for `v2.0` of the `JsonApiNet` library, which is under active development and subject to change.  See the `v1.0` branch for the initial library implementation and README. ###
+
+### Major changes in `v2.0` will include support for custom Type and Property resolvers (and a more consistent implementation), a less annoying interface than `JsonConvert.DeserializeObject<JsonApiDocument<List<Article>>>`), support for heterogenous resource collections and support for dependency injection.
+
+---
+
+An easy-to-use, extensible C# library for JSON API documents. 
+
+- Deserialization of complex attributes
+- Compound document support for included resources 
+- Automatic `Type` and `Property` resolution
+- Attribute and relationship property re-mapping
+- Full object graph for the JSON API document
+- And more!
+
+Written against **v1.0** of [the JSON API specification](http://jsonapi.org/format/)
+
+Built on top of [Json.NET](https://github.com/JamesNK/Newtonsoft.Json) and also uses [Humanizer](https://github.com/MehdiK/Humanizer) for type and property inference.
+
+> Note: This library doesn't provide a serializer (yet). There are a couple alternative serializers for JSON API out there, such as the [JsonApiMediaTypeFormatter](https://github.com/rmichela/JsonApiMediaTypeFormatter). I haven't done a ton of exploration in this area yet, but I would eventually like to extend this library to support both serialization and deserialization. If you're the author of one of these libraries and think it'd be a good fit to merge with this project, let me know.
+
+
+Single Resource
+---
+
+Here is a trivial, single-resource, JSON API document:
 
     {
       "data": {
@@ -17,37 +35,26 @@ Here is a simple JSON API document representing a single article. The article ha
         "id": "30cd428f-1a3b-459b-a9a8-0ca87c14dd31",
         "attributes": {
           "title": "JSON API paints my bikeshed!"
-        },
-        "links": {
-          "self": "http://example.com/articles/11"
         }
       }
     }
 
-Let's say we want to store the article from the document in the following class:
+And we want to parse this response and into an `Article` class:
 
-    public class Article
-    {
+    public class Article {
         public Guid Id { get; set; }
         public string Title { get; set; }
     }
-    
-The first thing we need to do is parse the document into a `JsonApiDocument<Article>`:
 
-    var document = JsonConvert.DeserializeObject<JsonApiDocument<Article>>(json);
+We do so by calling `ResourceFromDocument<T>`:
 
-Now we can get the `Resource` property, which will be of type `Article`:
-
-    var article = document.Resource;
+    var article = JsonApiNet.ResourceFromDocument<Article>(json);
     Assert.AreEqual("JSON API paints my bikeshed!", article.Title);
 
-> Note: The `Id` field for our `Article` class above is a `Guid` instead of a `string`. For `id` values, the converter supports any `Type` that implements a static `Parse(string)` method and will attempt to coerce the value found in the document to the appropriate type.
 
-
-Lists of resources
+Multiple Resources
 ---
-
-Let's make our sample document return a list with 1 element instead of a single resource:
+From the example above, changing `"data"` into an array gives us a collection with 1 resource in it:
 
     {
       "data": [{
@@ -55,30 +62,26 @@ Let's make our sample document return a list with 1 element instead of a single 
         "id": "30cd428f-1a3b-459b-a9a8-0ca87c14dd31",
         "attributes": {
           "title": "JSON API paints my bikeshed!"
-        },
-        "links": {
-          "self": "http://example.com/articles/11"
         }
       }]
     }
 
-Parsing it and getting to our `List<Article>` instance is easy:
+This time, we want to parse this response into a `List<Article>`:  
 
-    var document = JsonConvert.DeserializeObject<JsonApiDocument<List<Article>>>(json);
-    var articles = document.Resource;
+    var articles = JsonApiNet.ResourceFromDocument<List<Article>>(json);
     Assert.AreEqual("JSON API paints my bikeshed!", articles[0].Title);
+
+If your document's collection contains heterogenous resource types, you must ensure that the container given to `ResourceFromDocument<T>` can store them or else you will get exceptions at run-time.
 
 
 Compound Documents
 ---
-Now let's study a more complex document, with included resources, relationships, and meta data.
-
-This document is a list of articles. The article has a relationship to a single author and a list of comments. The resource data for each relationship is `included` in the document.
+Here is a compound document with a collection of resources that have relationships to included data, meta data, links, and more. This is a list of articles. Each article has a relationship to an author and a list of comments.
 
     {
       "data": [{
         "type": "articles",
-        "id": "1",
+        "id": "30cd428f-1a3b-459b-a9a8-0ca87c14dd31",
         "attributes": {
           "title": "JSON API paints my bikeshed!"
         },
@@ -137,13 +140,9 @@ This document is a list of articles. The article has a relationship to a single 
       }]
     }
 
-Here are the objects we'd like to retrieve from this document:
+We already have an `Article` class from before, but let's extend it with some additional properties:
 
-The `Article` class:
-
-    public class Article
-    {
-        public int Id { get; set; }
+    public class Article {
         public string Title { get; set; }
         public Person Author { get; set; }
         public List<Comment> Comments { get; set; }
@@ -151,104 +150,134 @@ The `Article` class:
 
 A `Person` class for the author:
 
-    public class Person
-    {
-        public int Id { get; set; }
+    public class Person {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Twitter { get; set; }
     }
 
 And a `Comment` class for the comments:
 
-    public class Comment
-    {
-        public int Id { get; set; }
+    public class Comment {
         public string Body { get; set; }
     }
 
-Nothing changes about how we get the list of articles:
+Nothing changes in how we retrieve the `List<Article>`:
 
-    var document = JsonConvert.DeserializeObject<JsonApiDocument<List<Article>>>(json);
-    var articles = document.Resource;
+    var articles = JsonApiNet.ResourceFromDocument<List<Article>>(json);
     Assert.AreEqual("JSON API paints my bikeshed!", articles[0].Title);
 
-And look, the author and comments are available too:
+The author and comments are available too!
 
     var author = articles[0].Author;
-    Assert.AreEqual("dgeb", author.Twitter);
+    Assert.AreEqual("Gebhardt", author.LastName);
 
     var comments = articles[0].Comments;
     Assert.AreEqual("I like XML better", comments[1].Body);
 
-> Note: If you need access to additional data about the relationships, you need to map the appropriate fields into your concrete classes (see the _Advanced Usage_ section) or drill down via the `document` instance to the `Relationships` and `Included` methods (see the _Additional Response Data_ section).
 
-
-Additional Response Data
+Property Resolution for Attributes
 ---
+In the examples, you might have noticed that there is a case mismatch between the `"title"` attribute named in the document and the `Title` property on the `Article` class.
 
-You can also query the `JsonApiDocument` instance for the full structure of the parsed document, including `Meta`, `Links`, `Errors`, etc.
+The `JsonApiPropertyResolver` is what's responsible for finding the correct property on your `Type`.
 
-For example, if there were `'links'` at the top-level of the document:
+> The default resolution process is: 
+> 
+> 1. First look in the `Type` for properties with the `[JsonApiAttribute("name")]` attribute, where `"name"` matches the the key from the `"attributes"` object in the document. If a property is found, use that.
+> 
+> 2. Next, look in the `Type` for a name that matches a normalized version of the key from the `"attributes"` object in the document. The normalization applies `Underscore()` and `PascalCase()` to the key, e.g. `"first-name"` becomes `FirstName`. 
 
-    {
-      "links": {
-        "admin": "http://admin.to/articles"
-      },
-      "data": { ... }
-    }
+For example, we could map the `"title"` attribute into a property named `Subject`:
 
-Then we can fetch the `'admin'` link:
-
-    var links = document.Links;
-    var adminUrl = links["admin"].Uri;
-    
-In this case, `links` would be a `JsonApiLinks` container instance, holding `JsonApiLink` members. 
-    
-> Note: Each `JsonApiLink` stored in the `JsonApiLinks` container has `Href` and `Meta` properties for fetching the values parsed out of the document and an additional `Uri` helper that converts the `Href` value into a `System.Uri`. In the case of a "simple link" (i.e., a string containing the link's URL), the `Meta` property will be null.
-
-You can get the parsed representation of the resource by calling `document.Data`, which is a `JsonApiResource` instance. This instance will let you fetch the `Attributes`, `Relationships`, `Links`, `Id`, `Type`, and `Meta` that were parsed from the document.
-
-
-Advanced Usage
----
-In the _Basic Usage_ section, you might have noticed that there is a case mismatch between the `title` attribute in the document and the `Title` field on the `Article` class.
-
-That is because by default, `JsonApi.Data` will `Underscore()` and then `Pascalize()` the attributes keys (using [Humanizer](https://github.com/MehdiK/Humanizer)) and then map your document's attributes into the resulting property name (i.e., `first-name` becomes `FirstName`).
-
-You can override this behavior by explicitly setting the `[JsonApiAttribute("title")]` attribute on one or more fields in your container objects.
-
-For example, we could map the `title` to a field named `originalTitle`
-
-    public class Article
-    {
+    public class Article {
         [JsonApiAttribute("title")]
-        public string originalTitle { get; set; }
+        public string Subject { get; set; }
     }
 
-> Note: It is technically allowed by the spec to name different attributes in the same resource object with keys that differ only in case or style. 
->
->     "data": { 
->       "attributes": { 
->         "first-name": "Alpha", 
->         "first_name": "Beta", 
->         "firstName": "Charlie" 
->       }
->     }
->     
-> If you do this (really?) and you don't also set explicitly set a `[JsonApiAttribute("")]` value for each of them, the behavior of this library with respect to those attributes is undefined.
+If for some reason you can't annotate your classes with the `[JsonApiAttribute("name")]` attribute, then you will need to write a custom `IJsonApiPropertyResolver` and hand it off to the serializer when converting your document. For example:
 
-Similarly, you can map relationships using the `[JsonApiRelationship]` attribute:
+    public class MonopolyResolver : IJsonApiPropertyResolver {
+        public PropertyInfo ResolveAttribute(Type type, string attributeName) {
+            if (attributeName == "monopoly") {
+                return type.GetProperty("boardwalk");
+            }
+            
+            return null;
+        }
+    }
+
+You can use it like this:
+
+    var boardGame = JsonApiNet.ResourceFromDocument<BoardGame>(
+        json, 
+        new SerializerSettings {
+            PropertyResolver = new MonopolyResolver()
+        }
+    );
+
+`"attributes"` object keys which do not resolve to a valid property are skipped.
+
+
+Type Resolution for Attributes
+---
+When parsing the values of an `"attributes"` object, `JsonApiNet` will attempt to deserialize each value into the `Type` associated with the property that the `JsonApiPropertyResolver` chose.
+
+For example, if we have the following document:
+
+    {
+      "data": {
+        "type": "ghost_busters",
+        "id": "Egon Spengler",
+        "attributes": {
+          "quotes": [
+            "I collect spores, molds, and fungus."
+          ],
+        }
+      }
+    }
+
+We can map it into a `GhostBuster` class like this:
+
+    public class GhostBuster {
+       public string Id { get; set; }
+       public List<string> Quotes { get; set; }
+    }
+
+In this example, the `JsonApiPropertyResolver` will resolve the `"quotes"` attribute into the `Quotes` property and then proceed to deserialize the quotes into a `List<string>`.
+
+> Note: This is using `Json.NET` under the hood, so you can map complex objects from your `"attributes"` values (or apply a custom `JsonConverter` to them, etc.)!
+
+
+Property Resolution for Relationships
+---
+This works exactly the same as Attribute resolution, only you need to use the `[JsonApiRelationship("name")]` attribute instead of `[JsonApiAttribute("name"}]` to map them.
+
+For example, let's say we want to map the `"author"` relationship into a property named `WrittenBy`:
 
     public class Article
     {
         [JsonApiRelationship("author")]
         public Person WrittenBy { get; set; }
     }
+    
 
-> Note: Fields for a resource object **MUST** share a common namespace with each other and with `type` and `id`. In other words, a resource can not have an attribute and relationship with the same name, nor can it have an attribute or relationship named `type` or `id`. This library is non-validating, so it does not attempt to enforce this. 
+Type Resolution for Relationships
+---
+This **does not** work the same way as attribute types. Resource types are resolved using the `JsonApiTypeResolver`, therefore, you must ensure that the `Type` of the property that your relationships resolve to can hold an instance of the `Type` resolved by the `JsonApiTypeResolver` for the relationship's resource.
 
-If you want to map the `Id` or `Type` fields, you can use the `[JsonApiId]` or `[JsonApiType]` attributes respectively:
+Using the _Compound Document_ example from above, this **will not work**:
+
+    public class Article {
+        [JsonApiRelationship("author")]
+        public Comment Author { get; set; }
+    }
+    
+This doesn't work because the `"type"` for the `"author"` relationship is `"people"`, and the `JsonApiTypeResolver` will resolve this to the `Person` class. The new `Person` instance will then be assigned to the `Author` property (which we've purposefully typed as a `Comment`), resulting in a run-time exception. 
+
+
+Property Resolution for Id and Type
+---
+If you want to map the `"id"` and `"type"` fields of the resource into your class, you can use the `[JsonApiId]` or `[JsonApiType]` attributes respectively:
 
     public class Article
     {
@@ -258,16 +287,97 @@ If you want to map the `Id` or `Type` fields, you can use the `[JsonApiId]` or `
         [JsonApiType]
         public string ResourceType { get; set; }
     }
+    
+   
+For the `"id"` field, `JsonApiNet` supports any `Type` that implements a static `Parse(string)` method and will use it to coerce the value found in the document to the appropriate type.
 
-Finally, if your `attributes` contains complex objects that are not included resources, they will be converted using the standard Json.NET converter, and so you can map their property names via `JsonProperty`, etc.
+
+Type Resolution for Resources
+---
+How does `JsonApiNet` know which class to instantiate for a given resource `"type"`? Enter the `JsonApiTypeResolver`.
+
+When you call `ResourceFromDocument<T>`, you get back an instance of type `T`; however, that is *not* the `Type` used to instantiate your object.
+
+For example, this works:
+
+    var article = JsonApiNet.ResourceFromDocument<object>(json);
+    Assert.AreEqual("JSON API paints my bikeshed!", ((Article)article).Title);
+    
+Notice that the object `Type` is still `Article` (it casts successfully); however, I gave `ResourceFromDocument<T>` the `object` type.
+
+The `JsonApiTypeResolver` is responsible for determining the correct class to instantiate based on the `"type"` attribute associated with the resource in the JSON API document.
+
+> The default resolution process is: 
+> 
+> 1. First look in the caller's assembly for classes with the `[JsonApiResourceType("name")]` attribute, where `"name"` matches the `"type"` from the document. If one is found, use that class.
+> 
+> 2. Next, look in the caller's assembly for classes with a name that matches a normalized version of the `"type"` from the document. The normalization applies `Underscore()`, `Singularize()`, and `PascalCase()` to the `"type"`, e.g. `"crazy-cats"` becomes `CrazyCat`
+
+If for some reason you can't apply the `[JsonApiResourceType]` attribute to your classes, you can also write a custom `IJsonApiTypeResolver` that implements whatever mapping you deem fit:
+
+    public class BarneyTypeResolver : IJsonApiTypeResolver {
+      public Type ResolveType(string typeName) {
+        if (typeName == "rain_drops") {
+          return typeof(LemonDrop);
+        }
+        
+        return null;
+      }
+    }
+
+Then you can use it like so:
+
+    var lemonDrop = JsonApiNet.ResourceFromDocument<LemonDrop>(
+        json, 
+        new SerializerSettings {
+            TypeResolver = new BarneyTypeResolver()
+        }
+    );
+
+If the `JsonApiTypeResolver` can't find a resource type, it will throw a `JsonApiTypeNotFoundException` 
+
+
+JsonApiDocument
+---
+In addition to providing lots of awesome ways to get concrete resource classes out of your JSON API documents, `JsonApiNet` can also get you an object graph that represents the entire JSON API document.
+
+This is an instance of `JsonApiDocument` and has all the good stuff like `Meta`, `Links`, `Errors`, etc parsed into it. For example, if there were `'links'` at the top-level of a document:
+
+    {
+      "links": {
+        "admin": "http://admin.to/articles"
+      },
+      "data": { ... }
+    }
+
+We can deserialize into a `JsonApiDocument` and fetch the `'admin'` link:
+
+    var document = JsonApiNet.DeseralizeDocument(json);
+    var links = document.Links;
+    var adminUrl = links["admin"].Uri;
+    
+In this case, `links` would be a `JsonApiLinks` container instance, holding `JsonApiLink` members. 
+    
+> Note: Each `JsonApiLink` stored in the `JsonApiLinks` container has `Href` and `Meta` properties for fetching the values parsed out of the document and an additional `Uri` helper that converts the `Href` value into a `System.Uri`. In the case of a "simple link" (i.e., a string containing the link's URL), the `Meta` property will be null.
+
+You can get the parsed representation of the resource (a `JsonApiResource` instance) by calling `document.Data`. This instance will let you fetch the `Attributes`, `Relationships`, `Links`, `Id`, `Type`, and `Meta` that were parsed from the document.
+
+All of the properties are named consistently with the specification, so it shouldn't be too hard to discover what you need to drill down to a specific part of the document.
+
+There is a generic from of `DeserializeDocument<T>` that returns a `JsonApiDocument<T>` instance, which you can use to access the `Resource` property and get what you would have normally received calling `ResourceFromDocument<T>`. For example:
+
+    var document = JsonApiNet.DeserializeDocument<Article>(json);
+    var article = document.Resource;
+    Assert.AreEqual("JSON API paints my bikeshed!", article.Title);
 
 
 Errors
 ---
+If you are calling `ResourceFromDocument<T>` then the presence of a top-level `"errors"` field will cause `JsonApiNet` to throw a `JsonApiErrorsException` and stop processing the document. You can get the parsed `JsonApiErrors` instance from the `JsonApiErrors` property on the exception.
 
-A top-level `errors` key will be parsed into the `Errors` property of the `document`. It is up to you to check for errors in your document and handle them appropriately. There is a convenience property named `HasErrors` on the top level document.
+Otherwise, a top-level `"errors"` field will be parsed into the `Errors` property of the `JsonApiDocument` and it would be up to you to check for the presence of these in your parsed document and handle them appropriately. There is a convenience property named `HasErrors` on the top level document for this purpose.
 
-For example, let's say the document looks like this:
+For example, consider the following response with errors:
 
     {
       "errors": [{
@@ -286,22 +396,54 @@ For example, let's say the document looks like this:
       }]
     }
 
-You could handle it and print an error message like so:
+If you were calling `ResourceFromDocument<T>` you might handle the error like this:
 
-    var document = JsonConvert.DeserializeObject<JsonApiDocument>(json);
+    Article article;
+    try {
+        article = JsonApiNet.ResourceFromDocument<Article>(json);
+    } catch (JsonApiErrorsException e) {
+        Console.Error.WriteLine("Wat?! {0}", e.JsonApiErrors.Message);
+        throw;
+    }
     
-    if (document.HasErrors)
-    { 
+Alternatively, if you were using `DeserializeDocument`, you might handle it like this:
+
+    var document = JsonApiNet.DeserializeDocument<Article>(json);
+    
+    if (document.HasErrors) { 
         Console.Error.WriteLine("Wat?! {0}", document.Errors.Message);
-    }
-    else
-    {
-        // ...
+        return;
     }
 
-This would give you the output:
+Either of these would give you an output like:
 
     Wat?! PF::Common::API::Errors::RoutingError: Invalid route
+
+
+Errata
+---
+
+### Deserializing into a Type only known at run-time ###
+If you want to deserialize into a container `Type` that is only known at run-time, you can use the non-generic form of `ResourceFromDocument` or `DeserializeDocument` and pass a `ResourceContainerType` value into the `SerializerSettings`: 
+
+    var article = JsonApiNet.ResourceFromDocument(
+        json,
+        new SerializerSettings {
+            ResourceContainerType = typeof(Article)
+        }
+    );
+
+    Assert.AreEqual("JSON API paints my bikeshed!", ((Article)article).Title);
+
+
+### Dependency Injection ###
+The static methods provided on `JsonApiNet` are convenience methods. You can also instantiate a `JsonApiNetSerializer` yourself and call the similarly-named methods on it. For example:
+
+    var serializer = new JsonApiNetSerializer();
+    var article = serializer.ResourceFromDocument<Article>(json);
+    Assert.AreEqual("JSON API paints my bikeshed!", article.Title);
+    
+The `JsonApinetSerializer` inherits from `IJsonApiNetSerializer` which can inject or mock as you see fit.
 
 
 Contributing
