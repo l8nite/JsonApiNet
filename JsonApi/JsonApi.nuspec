@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>JsonApiNet</id>
+    <version>1.0.0</version>
+    <authors>l8nite</authors>
+    <owners>l8nite</owners>
+    <licenseUrl>http://www.gnu.org/licenses/gpl-2.0.txt</licenseUrl>
+    <projectUrl>https://github.com/l8nite/JsonApiNet</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Deserialize JSON API documents with ease</description>
+    <releaseNotes>
+        [v1.0.0]
+        - Parse JsonApiDocument structure
+        - Mapping Id, Type, and Attributes into Resource class
+        - Supports complex types for [JsonApiAttribute("name")] properties
+        - Map relationships with data links to included resources
+    </releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>JSON JSONAPI</tags>
+  </metadata>
+</package>
