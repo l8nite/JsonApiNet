@@ -177,3 +177,4 @@ create-jenkins.ps1
 .build/
 TestResults.html
 TestResults.xml
+*.nupkg
