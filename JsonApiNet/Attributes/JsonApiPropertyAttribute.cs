@@ -3,7 +3,7 @@
 namespace JsonApiNet.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public abstract class JsonApiBaseAttribute : Attribute
+    public abstract class JsonApiPropertyAttribute : Attribute
     {
     }
 }

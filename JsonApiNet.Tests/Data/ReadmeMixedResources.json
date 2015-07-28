@@ -1,0 +1,21 @@
+﻿{
+  "data": [{
+    "type": "articles",
+    "id": "30cd428f-1a3b-459b-a9a8-0ca87c14dd31",
+    "attributes": {
+      "title": "JSON API paints my bikeshed!"
+    }
+  },{
+    "type": "books",
+    "id": "4062e824-544c-41c9-9ef0-f05d03476d1e",
+    "attributes": {
+      "title": "and I wrote a book about it..."
+    }
+  },{
+    "type": "magazines",
+    "id": "85b03dc1-8f43-4660-809d-b3869ca0935a",
+    "attributes": {
+      "title": "which was featured in a magazine!"
+    }
+  }]
+}

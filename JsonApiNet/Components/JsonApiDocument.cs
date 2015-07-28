@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using JsonApiNet.JsonConverters;
-using Newtonsoft.Json;
 
 namespace JsonApiNet.Components
 {
-    [JsonConverter(typeof(DocumentJsonConverter))]
     public class JsonApiDocument
     {
         public bool HasSingleResource { get; set; }
@@ -34,18 +31,12 @@ namespace JsonApiNet.Components
         // the HasSingleResource or HasMultipleResources helpers to determine behavior
         public List<JsonApiResource> Data { get; set; }
 
+        public dynamic Resource { get; set; }
+
         // note this glosses over some format issues, like if there are multiple included resources with the same identifier
         public JsonApiResource GetIncludedResourceByIdentifier(JsonApiResourceIdentifier id)
         {
             return Included.FirstOrDefault(jsonApiResource => jsonApiResource.ResourceIdentifier.Equals(id));
         }
-    }
-
-    [JsonConverter(typeof(DocumentJsonConverter))]
-    public class JsonApiDocument<T> : JsonApiDocument
-        where T : new()
-    {
-        // resource(s) represented by this document
-        public T Resource { get; set; }
     }
 }

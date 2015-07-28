@@ -4,37 +4,18 @@ namespace JsonApiNet.Components
 {
     public class JsonApiResource
     {
-        private string _id;
-        private string _type;
-
-        public JsonApiResource()
+        public JsonApiResource(string type, string id)
         {
-            ResourceIdentifier = new JsonApiResourceIdentifier(null, null);
+            Id = id;
+            Type = type;
+            ResourceIdentifier = new JsonApiResourceIdentifier(type, id);
         }
 
         [JsonProperty("id")]
-        public string Id
-        {
-            get { return _id; }
-
-            set
-            {
-                _id = value;
-                ResourceIdentifier.Id = _id;
-            }
-        }
+        public string Id { get; private set; }
 
         [JsonProperty("type")]
-        public string Type
-        {
-            get { return _type; }
-
-            set
-            {
-                _type = value;
-                ResourceIdentifier.Type = _type;
-            }
-        }
+        public string Type { get; private set; }
 
         [JsonProperty("attributes")]
         public JsonApiAttributes Attributes { get; set; }

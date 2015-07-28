@@ -1,6 +1,6 @@
 ﻿namespace JsonApiNet.Attributes
 {
-    public class JsonApiAttributeAttribute : JsonApiBaseAttribute
+    public class JsonApiAttributeAttribute : JsonApiPropertyAttribute
     {
         public JsonApiAttributeAttribute(string attributeName)
         {

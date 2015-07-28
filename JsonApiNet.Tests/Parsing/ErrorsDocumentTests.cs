@@ -1,5 +1,7 @@
 ﻿using JsonApiNet.Components;
+using JsonApiNet.Exceptions;
 using JsonApiNet.Tests.Data;
+using JsonApiNet.Tests.Readme.AttributePropertyResolution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
@@ -13,13 +15,29 @@ namespace JsonApiNet.Tests.Parsing
         [TestInitialize]
         public void TestInitialize()
         {
-            _document = JsonConvert.DeserializeObject<JsonApiDocument>(TestData.ValidDocumentErrorsJson());
+            var json = TestData.ValidDocumentErrorsJson();
+            _document = JsonApi.Document(json);
         }
 
         [TestMethod]
         public void DeserializObjectReturnsAnObject()
         {
             Assert.IsNotNull(_document);
+        }
+
+        [TestMethod]
+        public void ResourceFromDocumentThrows()
+        {
+            var json = TestData.ValidDocumentErrorsJson();
+            try
+            {
+                var res = JsonApi.ResourceFromDocument<Article>(json);
+                Assert.Fail("Did not throw JsonApiErrorsException!");
+            }
+            catch (JsonApiErrorsException e)
+            {
+                Assert.AreEqual("Error Title: Error details go here.", e.Message);
+            }
         }
 
         [TestMethod]

@@ -2,7 +2,6 @@
 using JsonApiNet.Components;
 using JsonApiNet.Tests.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 
 namespace JsonApiNet.Tests.Parsing
 {
@@ -14,30 +13,31 @@ namespace JsonApiNet.Tests.Parsing
         [TestInitialize]
         public void TestInitialize()
         {
-            _document = JsonConvert.DeserializeObject<JsonApiDocument>(TestData.ValidDocumentCompoundJson());
+            var json = TestData.ValidDocumentCompoundJson();
+            _document = JsonApi.Document(json);
         }
 
         [TestMethod]
-        public void DeserializObjectReturnsAnObject()
+        public void DeserializObjectReturnsAnObjectTest()
         {
             Assert.IsNotNull(_document);
         }
 
         [TestMethod]
-        public void DataIsList()
+        public void DataIsListTest()
         {
             Assert.IsInstanceOfType(_document.Data, typeof(List<JsonApiResource>));
             Assert.AreEqual(1, _document.Data.Count);
         }
 
         [TestMethod]
-        public void Meta()
+        public void MetaTest()
         {
             Assert.AreEqual("api", _document.Meta["json"]);
         }
 
         [TestMethod]
-        public void JsonApi()
+        public void JsonApiTest()
         {
             Assert.AreEqual("1.0", _document.JsonApi["version"]);
         }

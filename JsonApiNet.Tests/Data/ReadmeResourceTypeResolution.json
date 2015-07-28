@@ -1,0 +1,9 @@
+﻿{
+  "data": {
+    "type": "rain_drops",
+    "id": "1234",
+    "attributes": {
+      "splatter":  true
+    }
+  }
+}

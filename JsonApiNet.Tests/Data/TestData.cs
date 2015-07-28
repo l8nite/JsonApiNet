@@ -8,20 +8,55 @@ namespace JsonApiNet.Tests.Data
     {
         public static string ValidDocumentErrorsJson()
         {
-            return ReadExample("ValidDocumentErrors.json");
+            return ReadEmbeddedResource("ValidDocumentErrors.json");
         }
 
         public static string ValidDocumentSimpleJson()
         {
-            return ReadExample("ValidDocumentSimple.json");
+            return ReadEmbeddedResource("ValidDocumentSimple.json");
         }
 
         public static string ValidDocumentCompoundJson()
         {
-            return ReadExample("ValidDocumentCompound.json");
+            return ReadEmbeddedResource("ValidDocumentCompound.json");
         }
 
-        private static string ReadExample(string key)
+        public static string ValidDocumentComplexTypesJson()
+        {
+            return ReadEmbeddedResource("ValidDocumentComplexTypes.json");
+        }
+
+        public static string ReadmeSingleResourceJson()
+        {
+            return ReadEmbeddedResource("ReadmeSingleResource.json");
+        }
+
+        public static string ReadmeMultipleResourcesJson()
+        {
+            return ReadEmbeddedResource("ReadmeMultipleResources.json");
+        }
+
+        public static string ReadmeCompoundDocumentJson()
+        {
+            return ReadEmbeddedResource("ReadmeCompoundDocument.json");
+        }
+
+        public static string ReadmeMixedResourcesJson()
+        {
+            return ReadEmbeddedResource("ReadmeMixedResources.json");
+        }
+
+        public static string ReadmeAttributeTypeResolutionJson()
+        {
+            return ReadEmbeddedResource("ReadmeAttributeTypeResolution.json");
+        }
+
+        public static string ReadmeResourceTypeResolutionJson()
+        {
+            return ReadEmbeddedResource("ReadmeResourceTypeResolution.json");
+        }
+
+        private static string ReadEmbeddedResource(string key)
         {
             var assembly = Assembly.GetExecutingAssembly();
 
@@ -39,11 +74,6 @@ namespace JsonApiNet.Tests.Data
                     return reader.ReadToEnd();
                 }
             }
-        }
-
-        public static string ValidDocumentComplexTypesJson()
-        {
-            return ReadExample("ValidDocumentComplexTypes.json");
         }
     }
 }

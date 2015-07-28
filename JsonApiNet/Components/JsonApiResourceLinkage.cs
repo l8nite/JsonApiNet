@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using JsonApiNet.JsonConverters;
-using Newtonsoft.Json;
 
 namespace JsonApiNet.Components
 {
@@ -17,7 +15,6 @@ namespace JsonApiNet.Components
      * 
      * The boolean properties are set by the ResourceLinkageJsonConverter
      */
-    [JsonConverter(typeof(ResourceLinkageJsonConverter))]
     public class JsonApiResourceLinkage
     {
         public List<JsonApiResourceIdentifier> ResourceIdentifiers { get; set; }

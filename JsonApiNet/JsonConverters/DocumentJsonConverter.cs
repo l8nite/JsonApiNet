@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using JsonApiNet.Components;
 using JsonApiNet.Exceptions;
 using JsonApiNet.Helpers;
@@ -11,6 +12,13 @@ namespace JsonApiNet.JsonConverters
 {
     internal class DocumentJsonConverter : JsonConverter
     {
+        private readonly JsonApiSettings _settings;
+
+        public DocumentJsonConverter(JsonApiSettings settings)
+        {
+            _settings = settings;
+        }
+
         public override bool CanRead
         {
             get { return true; }
@@ -26,13 +34,23 @@ namespace JsonApiNet.JsonConverters
             throw new NotImplementedException();
         }
 
-        // objectType is JsonApiDocument<T> where T is the desired Resource class
-        public override object ReadJson(JsonReader reader, Type jsonApiDocumentType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var token = JToken.Load(reader);
-            var document = (JsonApiDocument)Activator.CreateInstance(jsonApiDocumentType);
 
-            MapTopLevelElements(document, token);
+            var document = new JsonApiDocument
+                {
+                    Errors = ReadProperty<JsonApiErrors>(token, "errors", serializer), 
+                    Meta = ReadProperty<JsonApiMeta>(token, "meta", serializer), 
+                    JsonApi = ReadProperty<JsonApiJsonApi>(token, "jsonapi", serializer), 
+                    Links = ReadProperty<JsonApiLinks>(token, "links", serializer), 
+                    Included = ReadProperty<List<JsonApiResource>>(token, "included", serializer)
+                };
+
+            if (document.HasErrors && _settings.CreateResource == true)
+            {
+                throw new JsonApiErrorsException(document.Errors);
+            }
 
             var dataToken = token["data"];
 
@@ -41,48 +59,29 @@ namespace JsonApiNet.JsonConverters
                 return document;
             }
 
-            var resourceType = GetIndividualResourceTypeForJsonApiDocument(jsonApiDocumentType);
-            var hasResourceType = resourceType != null;
-
-            JsonSerializer cerealizer;
-            ResourcePropertyResolver resolver = null;
-
-            if (hasResourceType)
+            switch (dataToken.Type)
             {
-                // sneaky, we're passing an attribute property resolver for the generic type T from JsonApiDocument<T>
-                // into the contract resolver, which passes it to the AttributesJsonConverter, which can deserialize
-                // JsonApiAttributes objects using the complex objects found in "T"'s [JsonApiAttribute] mappings.
-                resolver = new ResourcePropertyResolver(resourceType);
-                cerealizer = new JsonSerializer
-                    {
-                        ContractResolver = new JsonApiAttributesContractResolver(resolver)
-                    };
-            }
-            else
-            {
-                cerealizer = serializer;
+                    // this is a multiple-resource document
+                case JTokenType.Array:
+                    document.HasSingleResource = false;
+                    document.Data = dataToken.ToObject<List<JsonApiResource>>(serializer);
+                    break;
+
+                    // this is a single-resource document
+                case JTokenType.Object:
+                    document.HasSingleResource = true;
+                    document.Data = new List<JsonApiResource>
+                        {
+                            dataToken.ToObject<JsonApiResource>(serializer)
+                        };
+                    break;
+                default:
+                    throw new JsonApiFormatException("The 'data' member was not an array or object");
             }
 
-            // the "data" member can be an array or a single resource, we'll store it as a List<JsonApiResource>
-            // and set some boolean flags appropriately so that callers can do the right thing
-            if (dataToken.Type == JTokenType.Array)
+            if (_settings.CreateResource == true)
             {
-                document.HasSingleResource = false;
-                document.Data = dataToken.ToObject<List<JsonApiResource>>(cerealizer);
-            }
-            else
-            {
-                document.HasSingleResource = true;
-                document.Data = new List<JsonApiResource>
-                    {
-                        dataToken.ToObject<JsonApiResource>(cerealizer)
-                    };
-            }
-
-            // if they're trying to DeserializeObject<JsonApiDocument<T>>, we now have everything we need to build Resources of type T
-            if (hasResourceType)
-            {
-                ((dynamic)document).Resource = MapDocumentToGenericType(document, jsonApiDocumentType, resolver);
+                document.Resource = CreateResource(document);
             }
 
             return document;
@@ -90,71 +89,43 @@ namespace JsonApiNet.JsonConverters
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(JsonApiDocument<>) || objectType == typeof(JsonApiDocument);
+            return objectType == typeof(JsonApiDocument) || objectType == typeof(JsonApiDocument);
         }
 
-        // At the point of this method being called, the PropertyResolver should be instantiated for
-        // the specific individual resource type of the document
-        public dynamic MapDocumentToGenericType(JsonApiDocument document, Type jsonApiDocumentType, ResourcePropertyResolver resolver)
+        private static T ReadProperty<T>(JToken token, string name, JsonSerializer serializer) where T : class
         {
-            var genericType = jsonApiDocumentType.GetSingleGenericType();
-            var isListType = genericType.IsListType();
+            return (token == null || token[name] == null) ? null : token[name].ToObject<T>(serializer);
+        }
 
-            if ((document.HasSingleResource && isListType) || (document.HasMultipleResources && !isListType))
-            {
-                throw new JsonApiUsageException(
-                    "T from JsonApiDocument<T> is an IList; however, this document represents a single resource");
-            }
-
+        private dynamic CreateResource(JsonApiDocument document)
+        {
             if (document.HasSingleResource)
             {
-                return MapJsonApiResource(document, document.Data[0], resolver);
+                return CreateResource(document, document.Data[0]);
             }
 
-            // instantiate genericType, which should be an IList<T1>
-            var constructorInfo = genericType.GetConstructor(Type.EmptyTypes);
+            // else if (document.HasMultipleResources)
+            var list = (IList)new List<dynamic>();
 
-            if (constructorInfo == null)
+            if (_settings.ResultType != null)
             {
-                throw new JsonApiUsageException(string.Format("No default constructor found for {0}", genericType.Name));
+                // if ResourceFromDocument<List<T>> was used, ResultType will be T
+                var listType = typeof(List<>).MakeGenericType(new[] { _settings.ResultType });
+                list = (IList)Activator.CreateInstance(listType);
             }
 
-            var list = (IList)constructorInfo.Invoke(null);
-
-            // map each individual JsonApiResource from document.Data
-            foreach (var resource in document.Data)
+            foreach (var jsonApiResource in document.Data)
             {
-                list.Add(MapJsonApiResource(document, resource, resolver));
+                list.Add(CreateResource(document, jsonApiResource));
             }
 
             return list;
         }
 
-        private static void MapTopLevelElements(JsonApiDocument document, JToken token)
+        private dynamic CreateResource(JsonApiDocument document, JsonApiResource jsonApiResource)
         {
-            // use the standard Json.NET converters to handle all of these
-            document.Errors = token["errors"] != null ? token["errors"].ToObject<JsonApiErrors>() : null;
-            document.Meta = token["meta"] != null ? token["meta"].ToObject<JsonApiMeta>() : null;
-            document.JsonApi = token["jsonapi"] != null ? token["jsonapi"].ToObject<JsonApiJsonApi>() : null;
-            document.Links = token["links"] != null ? token["links"].ToObject<JsonApiLinks>() : null;
-            document.Included = token["included"] != null ? token["included"].ToObject<List<JsonApiResource>>() : null;
-        }
-
-        // jsonApiDocumentType is "JsonApiDocument<T>"
-        // if T is an ICollection<T1>, return T1, otherwise return T
-        private static Type GetIndividualResourceTypeForJsonApiDocument(Type jsonApiDocumentType)
-        {
-            var typeOfT = jsonApiDocumentType.GetSingleGenericType();
-            return typeOfT == null ? null : typeOfT.GetSingleElementType();
-        }
-
-        private static object MapJsonApiResource(
-            JsonApiDocument document, 
-            JsonApiResource jsonApiResource, 
-            ResourcePropertyResolver resolver)
-        {
-            var x = new JsonApiResourceMapper(document, resolver);
-            return x.MapJsonApiResource(jsonApiResource);
+            var mapper = new ResourceMapper(document, _settings);
+            return mapper.ToObject(jsonApiResource);
         }
     }
 }
