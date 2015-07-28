@@ -2,13 +2,15 @@
 <package >
   <metadata>
     <id>JsonApiNet</id>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <authors>Shaun Guth</authors>
     <licenseUrl>http://www.gnu.org/licenses/gpl-2.0.txt</licenseUrl>
     <projectUrl>https://github.com/l8nite/JsonApiNet</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Deserialize JSON API documents with ease</description>
     <releaseNotes>
+        [v2.0.1]
+        - Support .Net 4.0 in addition to .Net 4.5
         [v2.0.0]
         - A more usable interface
         - Support for heterogenous collections
@@ -16,5 +18,24 @@
     </releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>JSON JSONAPI</tags>
+    <dependencies>
+      <group>
+        <dependency id="Humanizer" version="1.37.7" />
+      </group>
+
+      <group targetFramework="net40">
+        <dependency id="Newtonsoft.Json" version="7.0.1"/>
+      </group>
+
+      <group targetFramework="net45">
+        <dependency id="Newtonsoft.Json" version="7.0.1"/>
+      </group>
+    </dependencies>
   </metadata>
+  <files>
+    <file src="bin\Release\net40\JsonApiNet.dll" target="lib\net40\JsonApiNet.dll" />
+    <file src="bin\Release\net40\JsonApiNet.pdb" target="lib\net40\JsonApiNet.pdb" />
+    <file src="bin\Release\net45\JsonApiNet.dll" target="lib\net45\JsonApiNet.dll" />
+    <file src="bin\Release\net45\JsonApiNet.pdb" target="lib\net45\JsonApiNet.pdb" />
+  </files>
 </package>

@@ -85,7 +85,7 @@ namespace JsonApiNet.Helpers
                 return;
             }
 
-            property.SetMethod.Invoke(resource, new[] { value });
+            property.GetSetMethod(true).Invoke(resource, new[] { value });
         }
 
         private void MapRelationships(dynamic resource, JsonApiResource jsonApiResource)
