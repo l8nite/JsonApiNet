@@ -285,7 +285,11 @@ We'll write a custom `NamingThingsIsHardResolver` that can map the `title` attri
 
 You can use it like this:
 
-    var article = JsonApi.ResourceFromDocument<Article>(json, null, new NamingThingsIsHardResolver());
+    var article = JsonApi.ResourceFromDocument<Article>(
+        json, 
+        null, 
+        new NamingThingsIsHardResolver());
+        
     Assert.AreEqual("JSON API paints my bikeshed!", article.ThingYouCallIt);
 
 
