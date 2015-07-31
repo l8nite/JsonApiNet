@@ -39,7 +39,7 @@ Here is a trivial, single-resource, JSON API document:
       }
     }
 
-And we want to parse this response and into an `Article` class:
+And we want to parse this response into an `Article` class:
 
     public class Article {
         public Guid Id { get; set; }
