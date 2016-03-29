@@ -74,11 +74,6 @@ namespace JsonApiNet.Helpers
                 return;
             }
 
-            if (property.PropertyType == typeof(Guid) && value == null)
-            {
-                value = default(Guid).ToString();
-            }
-
             dynamic result = parseMethod.Invoke(null, new[] { value });
             SetProperty(resource, property, result);
         }
