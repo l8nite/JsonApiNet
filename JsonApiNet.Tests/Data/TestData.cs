@@ -26,6 +26,11 @@ namespace JsonApiNet.Tests.Data
             return ReadEmbeddedResource("ValidDocumentComplexTypes.json");
         }
 
+        public static string ValidCompoundDocumentWithEmptyRelationshipsJson()
+        {
+            return ReadEmbeddedResource("ValidCompoundDocumentWithEmptyRelationships.json");
+        }
+
         public static string ReadmeSingleResourceJson()
         {
             return ReadEmbeddedResource("ReadmeSingleResource.json");

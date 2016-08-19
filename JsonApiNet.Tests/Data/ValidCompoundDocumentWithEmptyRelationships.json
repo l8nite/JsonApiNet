@@ -1,0 +1,20 @@
+﻿{
+  "data": [{
+    "type": "articles",
+    "id": "30cd428f-1a3b-459b-a9a8-0ca87c14dd31",
+    "attributes": {
+      "title": "JSON API paints my bikeshed!"
+    },
+    "links": {
+      "self": "http://example.com/articles/1"
+    },
+    "relationships": {
+      "author": {
+        "data": null
+      },
+      "comments": {
+        "data": []
+      }
+    }
+  }]
+}

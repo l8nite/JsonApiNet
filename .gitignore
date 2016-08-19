@@ -178,3 +178,6 @@ create-jenkins.ps1
 TestResults.html
 TestResults.xml
 *.nupkg
+
+# Visual Studio 2015 Artifacts
+**/.vs
