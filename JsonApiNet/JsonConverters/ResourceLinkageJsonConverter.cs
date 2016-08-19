@@ -48,6 +48,9 @@ namespace JsonApiNet.JsonConverters
                             token.ToObject<JsonApiResourceIdentifier>()
                         };
                     break;
+                case JTokenType.Null:
+                    linkage = null;
+                    break;
                 default:
                     throw new JsonApiFormatException("Resource linkage was not null, an object, or an array");
             }
