@@ -28,7 +28,7 @@ namespace JsonApiNet.JsonConverters
         {
             var token = JToken.Load(reader);
 
-            if (token == null || !token.HasValues)
+            if (token == null)
             {
                 return null;
             }
@@ -47,6 +47,9 @@ namespace JsonApiNet.JsonConverters
                         {
                             token.ToObject<JsonApiResourceIdentifier>()
                         };
+                    break;
+                case JTokenType.Null:
+                    linkage = null;
                     break;
                 default:
                     throw new JsonApiFormatException("Resource linkage was not null, an object, or an array");
