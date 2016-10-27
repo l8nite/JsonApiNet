@@ -36,7 +36,7 @@ namespace JsonApiNet.Components
         // note this glosses over some format issues, like if there are multiple included resources with the same identifier
         public JsonApiResource GetIncludedResourceByIdentifier(JsonApiResourceIdentifier id)
         {
-            return Included.FirstOrDefault(jsonApiResource => jsonApiResource.ResourceIdentifier.Equals(id));
+            return Included?.FirstOrDefault(jsonApiResource => jsonApiResource.ResourceIdentifier.Equals(id));
         }
     }
 }

@@ -28,7 +28,7 @@ namespace JsonApiNet.JsonConverters
         {
             var token = JToken.Load(reader);
 
-            if (token == null)
+            if (token == null || !token.HasValues)
             {
                 return null;
             }
