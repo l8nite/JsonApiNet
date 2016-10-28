@@ -21,6 +21,11 @@ namespace JsonApiNet.Tests.Data
             return ReadEmbeddedResource("ValidDocumentCompound.json");
         }
 
+        public static string ValidDocumentCompoundJsonWithNullProperty()
+        {
+            return ReadEmbeddedResource("ValidDocumentCompoundWithNullProperty.json");
+        }
+
         public static string ValidDocumentComplexTypesJson()
         {
             return ReadEmbeddedResource("ValidDocumentComplexTypes.json");
@@ -29,6 +34,11 @@ namespace JsonApiNet.Tests.Data
         public static string ReadmeSingleResourceJson()
         {
             return ReadEmbeddedResource("ReadmeSingleResource.json");
+        }
+
+        public static string ReadmeCompoundDocumentWithoutIncludes()
+        {
+            return ReadEmbeddedResource("ReadmeCompoundDocumentWithoutIncludes.json");
         }
 
         public static string ReadmeMultipleResourcesJson()

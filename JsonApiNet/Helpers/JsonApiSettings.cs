@@ -12,5 +12,7 @@ namespace JsonApiNet.Helpers
         public Type ResultType { get; set; }
 
         public bool? CreateResource { get; set; }
+
+        public bool IgnoreMissingRelationships { get; set; }
     }
 }

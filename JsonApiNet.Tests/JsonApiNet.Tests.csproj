@@ -50,23 +50,12 @@
     <Prefer32Bit>false</Prefer32Bit>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
-  <ItemGroup Condition="'$(Configuration)'=='Net40'">
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Net45'">
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -83,10 +72,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Data\TestData.cs" />
+    <Compile Include="Parsing\CompoundDocumentWithNullPropertyTests.cs" />
     <Compile Include="Parsing\CompoundDocumentTests.cs" />
     <Compile Include="Parsing\ErrorsDocumentTests.cs" />
     <Compile Include="Parsing\SimpleDocumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Readme\CompoundDocument\ReadmeCompoundDocumentWithoutIncludesTests.cs" />
     <Compile Include="Readme\IdTypePropertyResolution\ReadmeIdTypePropertyResolutionTests.cs" />
     <Compile Include="Readme\AttributeTypeResolution\ReadmeAttributeTypeResolutionTests.cs" />
     <Compile Include="Readme\RelationshipPropertyResolution\ReadmeRelationshipPropertyResolutionTests.cs" />
@@ -117,6 +108,8 @@
     <EmbeddedResource Include="Data\ReadmeResourceTypeResolution.json" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Data\ValidDocumentCompoundWithNullProperty.json" />
+    <EmbeddedResource Include="Data\ReadmeCompoundDocumentWithoutIncludes.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>

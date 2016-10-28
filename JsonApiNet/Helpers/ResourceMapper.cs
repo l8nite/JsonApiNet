@@ -21,6 +21,11 @@ namespace JsonApiNet.Helpers
 
         public dynamic ToObject(JsonApiResource jsonApiResource)
         {
+            if (jsonApiResource == null)
+            {
+                return null;
+            }
+
             var typeResolver = _settings.TypeResolver;
             var resolvedType = typeResolver.ResolveType(jsonApiResource.Type);
 
@@ -63,10 +68,10 @@ namespace JsonApiNet.Helpers
             // attempt to call "T.Parse(Id)" where T is the property's Type
             // assign the parsed result to the mapped property
             var parseMethod = propertyType.GetMethod(
-                "Parse", 
-                BindingFlags.Public | BindingFlags.Static, 
-                null, 
-                new[] { typeof(string) }, 
+                "Parse",
+                BindingFlags.Public | BindingFlags.Static,
+                null,
+                new[] { typeof(string) },
                 null);
 
             if (parseMethod == null || parseMethod.ReturnType != propertyType)
@@ -150,7 +155,7 @@ namespace JsonApiNet.Helpers
         {
             var includedResource = _document.GetIncludedResourceByIdentifier(resourceIdentifier);
 
-            if (includedResource == null)
+            if (includedResource == null && !_settings.IgnoreMissingRelationships)
             {
                 throw new JsonApiFormatException(string.Format("No included resource found for identifier: {0}", resourceIdentifier));
             }

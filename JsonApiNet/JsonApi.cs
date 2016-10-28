@@ -29,16 +29,18 @@ namespace JsonApiNet
         }
 
         public static JsonApiDocument Document<T>(
-            string json, 
-            IJsonApiTypeResolver typeResolver = null, 
-            IJsonApiPropertyResolver propertyResolver = null)
+            string json,
+            IJsonApiTypeResolver typeResolver = null,
+            IJsonApiPropertyResolver propertyResolver = null,
+            bool ignoreMissingRelationships = false)
         {
             var settings = new JsonApiSettings
-                {
-                    CreateResource = true, 
-                    PropertyResolver = propertyResolver, 
-                    TypeResolver = typeResolver
-                };
+            {
+                CreateResource = true,
+                PropertyResolver = propertyResolver,
+                TypeResolver = typeResolver,
+                IgnoreMissingRelationships = ignoreMissingRelationships
+            };
 
             var singleElementType = typeof(T).GetSingleElementType();
 
@@ -46,16 +48,18 @@ namespace JsonApiNet
         }
 
         public static T ResourceFromDocument<T>(
-            string json, 
-            IJsonApiTypeResolver typeResolver = null, 
-            IJsonApiPropertyResolver propertyResolver = null)
+            string json,
+            IJsonApiTypeResolver typeResolver = null,
+            IJsonApiPropertyResolver propertyResolver = null,
+            bool ignoreMissingRelationships = false)
         {
             var settings = new JsonApiSettings
-                {
-                    CreateResource = true,
-                    PropertyResolver = propertyResolver, 
-                    TypeResolver = typeResolver,
-                };
+            {
+                CreateResource = true,
+                PropertyResolver = propertyResolver,
+                TypeResolver = typeResolver,
+                IgnoreMissingRelationships = ignoreMissingRelationships
+            };
 
             var singleElementType = typeof(T).GetSingleElementType();
 
