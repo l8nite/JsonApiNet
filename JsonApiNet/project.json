@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "System.Reflection.Extensions": "4.3.0",
+    "Newtonsoft.Json": "9.0.1",
+    "Humanizer.xproj": "2.1.0",
+    "Microsoft.Extensions.DependencyModel": "1.1.0"
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
+    }
+  },
+
+  "tooling": {
+    "defaultNamespace": "JsonApiNet"
+  }
+}

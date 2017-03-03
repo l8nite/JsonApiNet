@@ -1,32 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Humanizer;
 using JsonApiNet.Attributes;
 using JsonApiNet.Exceptions;
-using JsonApiNet.Helpers;
+using Microsoft.Extensions.DependencyModel;
 
 namespace JsonApiNet.Resolvers
 {
     internal class ReflectingTypeResolver : IJsonApiTypeResolver
     {
-        private readonly Type _protoType;
         private readonly Dictionary<string, Type> _typeByJsonApiResourceTypeName;
         private readonly Dictionary<string, Type> _typeByName;
 
-        public ReflectingTypeResolver()
-            : this(null)
+        public ReflectingTypeResolver(Type rootType, Assembly[] additionalAssemblies = null)
         {
-        }
-
-        public ReflectingTypeResolver(Type protoType)
-        {
-            _protoType = protoType;
-
             _typeByJsonApiResourceTypeName = new Dictionary<string, Type>();
             _typeByName = new Dictionary<string, Type>();
 
-            InitializeLookupTables();
+            InitializeLookupTables(rootType, additionalAssemblies);
         }
 
         public Type ResolveType(string typeName)
@@ -51,18 +44,18 @@ namespace JsonApiNet.Resolvers
             return typeName.Underscore().Singularize().Pascalize();
         }
 
-        private void InitializeLookupTables()
+        private void InitializeLookupTables(Type rootType, Assembly[] additionalAssemblies)
         {
             // these are first-one-wins into the _typeByName cache, so they are resolved in top-down priority order
-            if (_protoType != null)
+            if (rootType != null)
             {
-                AddTypeToLookupTables(_protoType);
+                AddTypeToLookupTables(rootType);
 
-                // add the rest of the types in the _protoType's namespace, then everything else in its Assembly
+                // add the rest of the types in the rootType's namespace, then everything else in its Assembly
                 var leftovers = new List<Type>();
-                foreach (var type in _protoType.Assembly.GetTypes())
+                foreach (var type in rootType.GetTypeInfo().Assembly.GetTypes())
                 {
-                    if (type.Namespace == _protoType.Namespace)
+                    if (type.Namespace == rootType.Namespace)
                     {
                         AddTypeToLookupTables(type);
                     }
@@ -78,9 +71,15 @@ namespace JsonApiNet.Resolvers
                 }
             }
 
-            foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()))
+            if(additionalAssemblies != null)
             {
-                AddTypeToLookupTables(type);
+                foreach (var assembly in additionalAssemblies)
+                {
+                    foreach(var exportedType in assembly.ExportedTypes)
+                    {
+                        AddTypeToLookupTables(exportedType);
+                    }
+                }
             }
         }
 
@@ -99,14 +98,15 @@ namespace JsonApiNet.Resolvers
 
             // look this Type up by name
             _typeByName[type.Name] = type;
+            var typeInfo = type.GetTypeInfo();
 
-            if (!type.IsDefined(typeof(JsonApiResourceTypeAttribute), true))
+            if (!typeInfo.IsDefined(typeof(JsonApiResourceTypeAttribute), true))
             {
                 return;
             }
 
             var attribute =
-                type.GetCustomAttributes(typeof(JsonApiResourceTypeAttribute), true).FirstOrDefault() as JsonApiResourceTypeAttribute;
+                typeInfo.GetCustomAttributes(typeof(JsonApiResourceTypeAttribute), true).FirstOrDefault() as JsonApiResourceTypeAttribute;
 
             if (attribute != null)
             {

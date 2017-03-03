@@ -68,7 +68,7 @@ namespace JsonApiNet.Tests.Data
 
         private static string ReadEmbeddedResource(string key)
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var assembly = typeof(TestData).GetTypeInfo().Assembly;
 
             var resourceName = string.Format("JsonApiNet.Tests.Data.{0}", key);
 

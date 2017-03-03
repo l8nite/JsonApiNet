@@ -13,7 +13,7 @@ namespace JsonApiNet.Tests.Readme.ResourceTypeResolution
         {
             var json = TestData.ReadmeResourceTypeResolutionJson();
 
-            var rainDrop = JsonApi.ResourceFromDocument<object>(json);
+            var rainDrop = JsonApi.ResourceFromDocument<RainDrop>(json);
             Assert.IsTrue(((RainDrop)rainDrop).Splatter);
         }
 

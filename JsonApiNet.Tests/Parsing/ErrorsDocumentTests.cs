@@ -4,6 +4,7 @@ using JsonApiNet.Tests.Data;
 using JsonApiNet.Tests.Readme.AttributePropertyResolution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace JsonApiNet.Tests.Parsing
 {
@@ -16,7 +17,7 @@ namespace JsonApiNet.Tests.Parsing
         public void TestInitialize()
         {
             var json = TestData.ValidDocumentErrorsJson();
-            _document = JsonApi.Document(json);
+            _document = JsonApi.Document(json, typeof(ErrorsDocumentTests));
         }
 
         [TestMethod]

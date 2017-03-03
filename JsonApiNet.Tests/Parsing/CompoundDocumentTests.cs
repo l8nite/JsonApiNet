@@ -14,11 +14,11 @@ namespace JsonApiNet.Tests.Parsing
         public void TestInitialize()
         {
             var json = TestData.ValidDocumentCompoundJson();
-            _document = JsonApi.Document(json);
+            _document = JsonApi.Document(json, typeof(CompoundDocumentTests));
         }
 
         [TestMethod]
-        public void DeserializObjectReturnsAnObjectTest()
+        public void Test()
         {
             Assert.IsNotNull(_document);
         }
