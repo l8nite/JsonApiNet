@@ -1,59 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>    
-    <TargetFramework>netcoreapp1.1</TargetFramework>    
-    <Authors>Shaun Guth</Authors>    
-    <Company>l8nite</Company>    
-    <Product>Test</Product>    
-    <Description>Test Project</Description>    
-    <Copyright>Copyright (c) 2015 - 2017</Copyright>
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <AssemblyName>JsonApiNet.Tests</AssemblyName>
+    <PackageId>JsonApiNet.Tests</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.4;portable-net451+win8</PackageTargetFallback>
+    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\ReadmeAttributeTypeResolution.json" />
-    <None Remove="Data\ReadmeCompoundDocument.json" />
-    <None Remove="Data\ReadmeCompoundDocumentWithoutIncludes.json" />
-    <None Remove="Data\ReadmeMixedResources.json" />
-    <None Remove="Data\ReadmeMultipleResources.json" />
-    <None Remove="Data\ReadmeResourceTypeResolution.json" />
-    <None Remove="Data\ReadmeSingleResource.json" />
-    <None Remove="Data\ValidDocumentComplexTypes.json" />
-    <None Remove="Data\ValidDocumentCompound.json" />
-    <None Remove="Data\ValidDocumentCompoundWithNullProperty.json" />
-    <None Remove="Data\ValidDocumentErrors.json" />
-    <None Remove="Data\ValidDocumentSimple.json" />
+    <EmbeddedResource Include="Data\*.json" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Data\ReadmeAttributeTypeResolution.json" />
-    <EmbeddedResource Include="Data\ReadmeCompoundDocument.json" />
-    <EmbeddedResource Include="Data\ReadmeCompoundDocumentWithoutIncludes.json" />
-    <EmbeddedResource Include="Data\ReadmeMixedResources.json" />
-    <EmbeddedResource Include="Data\ReadmeMultipleResources.json" />
-    <EmbeddedResource Include="Data\ReadmeResourceTypeResolution.json" />
-    <EmbeddedResource Include="Data\ReadmeSingleResource.json" />
-    <EmbeddedResource Include="Data\ValidDocumentComplexTypes.json" />
-    <EmbeddedResource Include="Data\ValidDocumentCompound.json" />
-    <EmbeddedResource Include="Data\ValidDocumentCompoundWithNullProperty.json" />
-    <EmbeddedResource Include="Data\ValidDocumentErrors.json" />
-    <EmbeddedResource Include="Data\ValidDocumentSimple.json" />
+    <ProjectReference Include="../JsonApiNet/JsonApiNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20170125-04" />
-    <PackageReference Include="MSTest.TestAdapter" Version="1.1.10-rc2" />
-    <PackageReference Include="MSTest.TestFramework" Version="1.0.8-rc2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20170106-08" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.1.8-rc" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Humanizer.xproj" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\JsonApiNet\JsonApiNet.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.0.8-rc" />
   </ItemGroup>
 
 </Project>
