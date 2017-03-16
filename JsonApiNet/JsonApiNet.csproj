@@ -1,36 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
-    <Description>Deserialize JSON API documents with ease</Description>
-    <Authors>Shaun Guth</Authors>
-    <Company>l8nite</Company>
-    <Copyright>Copyright 2015</Copyright>
-    <AssemblyVersion>4.0.0.0</AssemblyVersion>
-    <FileVersion>4.0.0.0</FileVersion>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>4.0.0</Version>
-    <PackageLicenseUrl>http://www.gnu.org/licenses/gpl-2.0.txt</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/l8nite/JsonApiNet</PackageProjectUrl>
-    <PackageReleaseNotes>[v4.0.0]
-- Platform is .NET Core
-- Require assembly references for DTO types instead of global type scan
-[v3.0.0]
- - Drop .Net 4.0 support
- - Add support for null relationships (kprilux)
-[v2.0.1]
- - Support .Net 4.0 in addition to .Net 4.5
- [v2.0.0]
- - A more usable interface
- - Support for heterogenous collections
- - Smarter type inference</PackageReleaseNotes>
-    <PackageTags>JSON JSONAPI</PackageTags>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <AssemblyName>JsonApiNet</AssemblyName>
+    <PackageId>JsonApiNet</PackageId>
+    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Humanizer.xproj" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
 </Project>
