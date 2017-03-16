@@ -1,0 +1,50 @@
+﻿{
+  "meta": {
+    "json": "api"
+  },
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "brochures",
+    "id": "304",
+    "attributes": {
+      "title": "Breathtaking vistas"
+    },
+    "links": {
+      "self": "http://example.com/brochure/304"
+    },
+    "relationships": {
+      "illustrations": {
+        "links": {
+          "self": {
+            "href": "http://example.com/brochure/304/relationships/illustrations"
+          },
+          "related": {
+            "href": "http://example.com/brochure/78/illustrations"
+          }
+        },
+        "data": [
+          {
+            "type": "illustrations",
+            "id": "78"
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "illustrations",
+      "id": "78",
+      "attributes": {
+        "image-uri": "http://example.com/images/78.jpg",
+        "horizontal-resolution": 640,
+        "vertical-resolution": 480
+      },
+      "links": {
+        "self": "http://example.com/illustrations/78"
+      }
+    }
+  ]
+}

@@ -5,6 +5,8 @@
 *.suo
 *.user
 *.sln.docstates
+.vs/
+.vscode/
 
 # Build results
 
@@ -14,6 +16,7 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+project.lock.json
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/

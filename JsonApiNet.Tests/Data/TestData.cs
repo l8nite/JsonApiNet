@@ -66,9 +66,24 @@ namespace JsonApiNet.Tests.Data
             return ReadEmbeddedResource("ReadmeResourceTypeResolution.json");
         }
 
+        public static string ValidGraphicNovelSimpleJson()
+        {
+            return ReadEmbeddedResource("ValidGraphicNovelSimple.json");
+        }
+
+        public static string ValidGraphicNovelCompoundJson()
+        {
+            return ReadEmbeddedResource("ValidGraphicNovelCompound.json");
+        }
+
+        public static string CrossAssemblyDocumentJson()
+        {
+            return ReadEmbeddedResource("CrossAssemblyDocument.json");
+        }
+
         private static string ReadEmbeddedResource(string key)
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var assembly = typeof(TestData).GetTypeInfo().Assembly;
 
             var resourceName = string.Format("JsonApiNet.Tests.Data.{0}", key);
 

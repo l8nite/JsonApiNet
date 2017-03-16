@@ -14,7 +14,7 @@ namespace JsonApiNet.Tests.Parsing
         public void TestInitialize()
         {
             var json = TestData.ValidDocumentCompoundJsonWithNullProperty();
-            _document = JsonApi.Document(json);
+            _document = JsonApi.Document(json, typeof(CompoundDocumentWithNullPropertyTests));
         }
 
         [TestMethod]

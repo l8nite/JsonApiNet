@@ -1,123 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3DE2919D-C351-4355-93DB-4C1EB77B8D1C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JsonApiNet</RootNamespace>
+    <TargetFramework>netstandard1.6</TargetFramework>
     <AssemblyName>JsonApiNet</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <PackageId>JsonApiNet</PackageId>
+    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Humanizer, Version=2.1.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Humanizer.xproj" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Attributes\JsonApiAttributeAttribute.cs" />
-    <Compile Include="Attributes\JsonApiTypeAttribute.cs" />
-    <Compile Include="Attributes\JsonApiIdAttribute.cs" />
-    <Compile Include="Attributes\JsonApiRelationshipAttribute.cs" />
-    <Compile Include="Attributes\JsonApiResourceTypeAttribute.cs" />
-    <Compile Include="Exceptions\JsonApiErrorsException.cs" />
-    <Compile Include="Helpers\PropertyLookupCacheManager.cs" />
-    <Compile Include="Helpers\TypeExtensions.cs" />
-    <Compile Include="IJsonApiNetSerializer.cs" />
-    <Compile Include="JsonConverters\ResourceJsonConverter.cs" />
-    <Compile Include="JsonConverters\ContractResolver.cs" />
-    <Compile Include="Resolvers\IJsonApiTypeResolver.cs" />
-    <Compile Include="JsonApiNetSerializer.cs" />
-    <Compile Include="Resolvers\ReflectingTypeResolver.cs" />
-    <Compile Include="Resolvers\IJsonApiPropertyResolver.cs" />
-    <Compile Include="Helpers\PropertyLookupCache.cs" />
-    <Compile Include="Resolvers\JsonApiPropertyResolver.cs" />
-    <Compile Include="JsonApi.cs" />
-    <Compile Include="JsonConverters\DocumentJsonConverter.cs" />
-    <Compile Include="Components\JsonApiAttributes.cs" />
-    <Compile Include="Attributes\JsonApiPropertyAttribute.cs" />
-    <Compile Include="Components\JsonApiDocument.cs" />
-    <Compile Include="Components\JsonApiErrors.cs" />
-    <Compile Include="Components\JsonApiJsonApi.cs" />
-    <Compile Include="JsonConverters\LinkJsonConverter.cs" />
-    <Compile Include="Components\JsonApiLinks.cs" />
-    <Compile Include="Components\JsonApiMeta.cs" />
-    <Compile Include="Components\JsonApiRelationship.cs" />
-    <Compile Include="Components\JsonApiRelationships.cs" />
-    <Compile Include="Helpers\ResourceMapper.cs" />
-    <Compile Include="Components\JsonApiResourceIdentifier.cs" />
-    <Compile Include="Components\JsonApiResourceLinkage.cs" />
-    <Compile Include="JsonConverters\ResourceLinkageJsonConverter.cs" />
-    <Compile Include="Components\JsonApiError.cs" />
-    <Compile Include="Components\JsonApiErrorSource.cs" />
-    <Compile Include="Exceptions\JsonApiFormatException.cs" />
-    <Compile Include="Components\JsonApiLink.cs" />
-    <Compile Include="Components\JsonApiResource.cs" />
-    <Compile Include="Exceptions\JsonApiUsageException.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Exceptions\JsonApiTypeNotFoundException.cs" />
-    <Compile Include="Resolvers\StringToTypeResolver.cs" />
-    <Compile Include="Helpers\JsonApiSettings.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  -->
-  <Target Name="AfterBuild">
-    <!-- Load up the information from the assembly -->
-    <GetAssemblyIdentity AssemblyFiles="$(OutputPath)$(AssemblyName).dll">
-      <Output TaskParameter="Assemblies" ItemName="OutputAssemblyInfo" />
-    </GetAssemblyIdentity>
-    <Message Text="Info: %(OutputAssemblyInfo.Version)" />
-  </Target>
-  <Target Name="Package">
-    <!-- Ensure the Package directory exists for this project -->
-    <RemoveDir Directories="NuGet" />
-    <MakeDir Directories="NuGet" />
-    <!-- Package the project -->
-    <Exec WorkingDirectory="$(BuildDir)" Command="NuGet.exe pack -Verbosity detailed -Symbols -OutputDir &quot;NuGet&quot; -Version %(OutputAssemblyInfo.Version) -Properties &quot;Configuration=$(Configuration)&quot; $(AssemblyName).nuspec" />
-  </Target>
+
 </Project>

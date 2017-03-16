@@ -105,8 +105,8 @@ Let's say we wrote a common interface `ITitled`:
     public interface ITitled {
         string Title { get; set; }
     }
-    
-And classes to hold the `Article`, `Book` and `Magazine` types, all of which implement `ITitled` 
+
+And classes to hold the `Article`, `Book` and `Magazine` types, all of which implement `ITitled`
 
     public class Article : ITitled {
         public Guid Id { get; set; }
@@ -120,7 +120,7 @@ And classes to hold the `Article`, `Book` and `Magazine` types, all of which imp
     public class Magazine : ITitled {
         public string Title { get; set; }
     }
-    
+
 Then we can parse this into a `List<ITitled>`:
 
     var titled = JsonApi.ResourceFromDocument<List<ITitled>>(json);
@@ -131,7 +131,7 @@ Then we can parse this into a `List<ITitled>`:
 > If you forgot to make `Article` implement `ITitled`, you would see an exception like this:
 >
 >     System.ArgumentException: The value "JsonApiNet.Tests.Readme.MixedResources.Article" is
->     not of type "JsonApiNet.Tests.Readme.MixedResources.ITitled" and cannot be used in this 
+>     not of type "JsonApiNet.Tests.Readme.MixedResources.ITitled" and cannot be used in this
 >     generic collection.
 
 
@@ -254,7 +254,7 @@ For example, we could map the `"title"` attribute into a property named `Subject
         [JsonApiAttribute("title")]
         public string Subject { get; set; }
     }
-    
+
 Then fetch it back out:
 
     var article = JsonApi.ResourceFromDocument<Article>(json);
@@ -263,14 +263,14 @@ Then fetch it back out:
 
 Customizing Property Resolution
 ---
-If you have complex rules, or you can't annotate your mapped classes, then you will need to write a custom `IJsonApiPropertyResolver` and give it to the serializer when converting your document. 
+If you have complex rules, or you can't annotate your mapped classes, then you will need to write a custom `IJsonApiPropertyResolver` and give it to the serializer when converting your document.
 
-For example, here is an `Article` with a property named `ThingYouCallit` 
+For example, here is an `Article` with a property named `ThingYouCallit`
 
     public class Article {
         public string ThingYouCallIt { get; set; }
     }
-    
+
 We'll write a custom `NamingThingsIsHardResolver` that can map the `title` attribute from our JSON API document into the `ThingYouCallIt` property:
 
     public class NamingThingsIsHardResolver : JsonApiPropertyResolver {
@@ -286,10 +286,10 @@ We'll write a custom `NamingThingsIsHardResolver` that can map the `title` attri
 You can use it like this:
 
     var article = JsonApi.ResourceFromDocument<Article>(
-        json, 
-        null, 
+        json,
+        null,
         new NamingThingsIsHardResolver());
-        
+
     Assert.AreEqual("JSON API paints my bikeshed!", article.ThingYouCallIt);
 
 
@@ -343,7 +343,7 @@ For example, let's say we want to map the `"author"` relationship into a propert
 
 And then we can use it like this:
 
-    var articles = JsonApi.ResourceFromDocument<List<Article>>(json); 
+    var articles = JsonApi.ResourceFromDocument<List<Article>>(json);
     Assert.AreEqual("Gebhardt", articles[0].WrittenBy.LastName);
 
 
@@ -361,10 +361,10 @@ Using the _Compound Document_ example from above, this **will not work**:
 This doesn't work because the `"type"` for the `"author"` relationship is `"people"`, and the `JsonApiTypeResolver` will resolve this to the `Person` class. The new `Person` instance will then be assigned to the `Author` property (which in this example we've incorrectly specified is a `Comment`), resulting in a run-time exception.
 
 > You'll get an exception like:
-> 
+>
 >     System.ArgumentException: Object of type
->     'JsonApiNet.Tests.Readme.RelationshipPropertyResolution.Person' 
->     cannot be converted to type 
+>     'JsonApiNet.Tests.Readme.RelationshipPropertyResolution.Person'
+>     cannot be converted to type
 >     'JsonApiNet.Tests.Readme.RelationshipPropertyResolution.Comment'
 
 
@@ -388,22 +388,25 @@ Type Resolution for Resources
 ---
 How does `JsonApiNet` know which class to instantiate for a given resource `"type"`? Enter the `JsonApiTypeResolver`.
 
-When you call `ResourceFromDocument<T>`, you get back an instance of type `T`, but that doesn't mean `JsonApiNet` is instantiating an object of type `T` for your resource types.
-
-For example, this works:
-
-    var article = JsonApi.ResourceFromDocument<object>(json);
-    Assert.AreEqual("JSON API paints my bikeshed!", ((Article)article).Title);
-
-Notice that it still got an `Article` (it casts successfully) even though we gave `ResourceFromDocument<T>` a generic type of `object`.
+When you call `ResourceFromDocument<T>`, you get back an instance of type `T`, but that doesn't mean `JsonApiNet` is instantiating an object of type `T` for your resource types. The type T is a reference point that identifies the default assembly within which the `JsonApiTypeResolver` will search for types.
 
 The `JsonApiTypeResolver` is responsible for determining the correct class to instantiate based on the `"type"` attribute associated with the resource in the JSON API document.
 
-The default `JsonApiTypeResolver` is the `ReflectingTypeResolver` and it works by interrogating all of the `Types` defined in all assemblies within the current `AppDomain` for classes with the `[JsonApiResourceType("name")]` attribute set.
+The default `JsonApiTypeResolver` is the `ReflectingTypeResolver` and it works by interrogating all of the `Types` defined in the assembly that defines type `T` looking for classes with the `[JsonApiResourceType("name")]` attribute set.
 
 If a `Type` with a `[JsonApiResourceType("name")]` attribute is found, where `"name"` matches the `typeName` then that type is used.
 
 Otherwise, the first `Type` whose name matches the normalized form of the `typeName` is used. The normalization applies `Underscore()`, `Singularize()`, and `PascalCase()` to the `"type"`, e.g. `"crazy-cats"` becomes `CrazyCat`.
+
+In cases where the definition of types in your object graph includes types defined in other assemblies, it is possible to pass in an array of assemblies to include in type resolution; for example:
+
+    Assembly[] additionalAssemblies = {
+        typeof(Illustration).GetTypeInfo().Assembly
+    };
+
+    var doc = JsonApi.ResourceFromDocument<Brochure>(
+                json,
+                additionalAssemblies: additionalAssemblies);
 
 It turns out this is pretty useful for most common cases; however, if you want to explicitly specify the `Type` chosen for a given resource `"type"` in your document, then you can implement _Custom Type Resolution_ as described below.
 
@@ -467,7 +470,7 @@ You can get the parsed representation of the resource (a `JsonApiResource` insta
 
 All of the properties are named consistently with the specification, so it shouldn't be too hard to discover what you need to drill down to a specific part of the document.
 
-There is a generic from of `Document<T>` that returns a `JsonApiDocument` instance which you can use to access the `Resource` property and get what you would have normally received calling `ResourceFromDocument<T>`. 
+There is a generic from of `Document<T>` that returns a `JsonApiDocument` instance which you can use to access the `Resource` property and get what you would have normally received calling `ResourceFromDocument<T>`.
 
 For example:
 
@@ -529,7 +532,7 @@ Errata
 ---
 
 ### Deserializing into a Type only known at run-time ###
-If you want to deserialize into a container `Type` that is only known at run-time, you can use the non-generic form of `ResourceFromDocument` or `Document` and pass the `ResultType` to the `SerializerSettings` 
+If you want to deserialize into a container `Type` that is only known at run-time, you can use the non-generic form of `ResourceFromDocument` or `Document` and pass the `ResultType` to the `SerializerSettings`
 
     var article = JsonApi.ResourceFromDocument(
         json,
