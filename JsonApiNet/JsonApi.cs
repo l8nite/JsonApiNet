@@ -39,7 +39,8 @@ namespace JsonApiNet
             string json,
             IJsonApiTypeResolver typeResolver = null,
             IJsonApiPropertyResolver propertyResolver = null,
-            bool ignoreMissingRelationships = false)
+            bool ignoreMissingRelationships = false,
+            Assembly[] additionalAssemblies = null)
         {
             var settings = new JsonApiSettings
             {
@@ -51,14 +52,15 @@ namespace JsonApiNet
 
             var singleElementType = typeof(T).GetSingleElementType();
 
-            return Document(json, singleElementType, settings);
+            return Document(json, singleElementType, settings, additionalAssemblies);
         }
 
         public static T ResourceFromDocument<T>(
             string json,
             IJsonApiTypeResolver typeResolver = null,
             IJsonApiPropertyResolver propertyResolver = null,
-            bool ignoreMissingRelationships = false)
+            bool ignoreMissingRelationships = false,
+            Assembly[] additionalAssemblies = null)
         {
             var settings = new JsonApiSettings
             {
@@ -70,7 +72,7 @@ namespace JsonApiNet
 
             var singleElementType = typeof(T).GetSingleElementType();
 
-            return ResourceFromDocument(json, singleElementType, settings);
+            return ResourceFromDocument(json, singleElementType, settings, additionalAssemblies);
         }
 
         private static JsonApiNetSerializer MakeSerializer(

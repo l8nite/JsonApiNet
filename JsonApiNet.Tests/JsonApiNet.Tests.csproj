@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <AssemblyName>JsonApiNet.Tests</AssemblyName>
@@ -8,6 +12,9 @@
     <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.4;portable-net451+win8</PackageTargetFallback>
     <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <ApplicationIcon />
+    <OutputTypeEx>library</OutputTypeEx>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../JsonApiNet/JsonApiNet.csproj" />
+    <ProjectReference Include="..\JsonApiNet.TestSecondAssembly\JsonApiNet.TestSecondAssembly.csproj" />
   </ItemGroup>
 
   <ItemGroup>
