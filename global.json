@@ -1,0 +1,6 @@
+{
+    "projects" : [ 
+        "JsonApiNet", 
+        "JsonApiNet.Tests" 
+        ]
+}

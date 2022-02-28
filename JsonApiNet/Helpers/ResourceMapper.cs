@@ -65,15 +65,26 @@ namespace JsonApiNet.Helpers
                 return;
             }
 
+            // DotNet Core GetMethod method no longer allows multiple filters(!). So we pull all
+            // public static methods and match name and parameter type.
+            var parseMethod = propertyType.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Where(mi =>{
+                    var parameters = mi.GetParameters();
+                    return mi.Name == "Parse" 
+                        && parameters.Length == 1
+                        && parameters.Single().ParameterType == typeof(string);
+                })
+                .FirstOrDefault();
+
             // attempt to call "T.Parse(Id)" where T is the property's Type
             // assign the parsed result to the mapped property
-            var parseMethod = propertyType.GetMethod(
+/*            var parseMethod = propertyType.GetMethod(
                 "Parse",
                 BindingFlags.Public | BindingFlags.Static,
                 null,
                 new[] { typeof(string) },
                 null);
-
+*/
             if (parseMethod == null || parseMethod.ReturnType != propertyType)
             {
                 return;

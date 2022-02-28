@@ -1,0 +1,87 @@
+﻿{
+  "meta": {
+    "json": "api"
+  },
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "graphicNovels",
+    "id": "44",
+    "attributes": {
+      "title": "Tales from JSON API"
+    },
+    "links": {
+      "self": "http://example.com/graphicNovel/44"
+    },
+    "relationships": {
+      "illustrator": {
+        "links": {
+          "self": "http://example.com/graphicNovel/44/relationships/illustrator",
+          "related": "http://example.com/graphicNovel/14/illustrator"
+        },
+        "data": {
+          "type": "illustrators",
+          "id": "14"
+        }
+      },
+      "illustrations": {
+        "links": {
+          "self": {
+            "href": "http://example.com/graphicNovel/44/relationships/illustrations"
+          },
+          "related": {
+            "href": "http://example.com/graphicNovel/78/illustrations"
+          }
+        },
+        "data": [
+          {
+            "type": "illustrations",
+            "id": "78"
+          },
+          {
+            "type": "illustrations",
+            "id": "112"
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "illustrators",
+      "id": "14",
+      "attributes": {
+        "first-name": "Stan",
+        "last-name": "Horblower"
+      },
+      "links": {
+        "self": "http://example.com/illustrators/14"
+      }
+    },
+    {
+      "type": "illustrations",
+      "id": "78",
+      "attributes": {
+        "image-uri": "http://example.com/images/78.jpg",
+        "horizontal-resolution": 640,
+        "vertical-resolution":  480 
+      },
+      "links": {
+        "self": "http://example.com/illustrations/78"
+      }
+    },
+    {
+      "type": "illustrations",
+      "id": "112",
+      "attributes": {
+        "image-uri": "http://example.com/images/112.jpg",
+        "horizontal-resolution": 1086,
+        "vertical-resolution": 720
+      },
+      "links": {
+        "self": "http://example.com/illustrations/112"
+      }
+    }
+  ]
+}

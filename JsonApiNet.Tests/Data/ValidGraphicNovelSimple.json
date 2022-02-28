@@ -1,0 +1,12 @@
+﻿{
+  "data": {
+    "type": "graphicNovels",
+    "id": "44",
+    "attributes": {
+      "title": "Tales from JSON API"
+    },
+    "links": {
+      "self": "http://example.com/graphicNovel/44"
+    }
+  }
+}
